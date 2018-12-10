@@ -1,4 +1,3 @@
-
 import json
 class Data:
     def __init__(self, data=None):
@@ -10,6 +9,31 @@ class Data:
 class EncrDecr:
     def __init__(self):
         self.data = None
+
+    def checkShift(self,shift):
+        while True:
+            try:
+                int(shift)
+                pass
+            except ValueError:
+                shift =raw_input("Value Error! Please enter integers")
+
+    def EncrDecr_menu(self):
+        ask = raw_input("Please choose one of the following(Please enter the number before the option)"
+                        "\n""1.Encrypt"
+                        "\n""2.Decrypt"
+                        "\n""3.Exit")
+        while True:
+            if ask == "1":
+                self.encrypt()
+                self.EncrDecr_menu()
+            elif ask == "2":
+                self.decrypt()
+                self.EncrDecr_menu()
+            elif ask == "3":
+                exit()
+            else:
+                ask = raw_input("Please enter a valid input")
 
     def append(self, data):
         newData = Data(data)
@@ -57,12 +81,14 @@ class EncrDecr:
             temp = temp.next
 
     def encrypt(self):
-        word = raw_input("Enter the word to encrypt")
-        shift = input("Enter the shift")
-        if self.askfor_encrword(word,shift) is False:
-            pass
-        else:
-            return
+        word = raw_input("Enter the word/sentence to encrypt")
+        while True:
+            try:
+                shift = input("Enter the shift")
+                break
+            except:
+                print("That's not a valid option!")
+        self.findEncrypted(word,shift)
         initial = shift
         list = []
         fixshift = shift
@@ -77,15 +103,27 @@ class EncrDecr:
                     keyloc = keyloc.next
                 list.append(keyloc.data)
         joint = "".join(list)
-        self.savecoding(word,initial,encrypted_word=joint,decrypted_word=None)
+        self.saveCoding(word,initial,encrypted_word=joint,decrypted_word=None)
         print joint
-        return joint
+        ask = raw_input("Continue Encrypting ??")
+        while True:
+            if ask.lower() == "yes":
+                return self.encrypt()
+            elif ask.lower() == "no":
+                break
+            else:
+                ask = raw_input( "Please enter yes or no")
 
     def decrypt(self):
-        word = raw_input("Enter the word to decrypt")
-        shift = input("Enter the shift")
+        word = raw_input("Enter the word/sentence to decrypt")
+        while True:
+            try:
+                shift = input("Enter the shift")
+                break
+            except:
+                print("That's not a valid option!")
         initial = shift
-        self.askfor_decrword(word,shift)
+        self.findDecrypted(word,shift)
         list = []
         fixshift = shift
         for key in word:
@@ -93,15 +131,23 @@ class EncrDecr:
                 list.append(" ")
             else:
                 shift = fixshift
-                self.reverse()
+                # self.reverse()
                 keyloc = self.findData(key)
                 while shift is not 0:
                     shift = shift - 1
-                    keyloc = keyloc.next
+                    keyloc = keyloc.previous
                 list.append(keyloc.data)
         joint = "".join(list)
-        self.savecoding(word,initial,decrypted_word=joint,encrypted_word=None)
+        self.saveCoding(word,initial,decrypted_word=joint,encrypted_word=None)
         print joint
+        ask = raw_input("Continue Decrypting??")
+        while True:
+            if ask.lower() == "yes":
+                return self.encrypt()
+            elif ask.lower() == "no":
+                break
+            else:
+                ask = raw_input( "Please enter a yes or no")
 
     def EncrDecr_data(self, list):
         letters_lower = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -118,7 +164,7 @@ class EncrDecr:
         for k in numbers:
             list.append(k)
 
-    def savecoding(self,word, shift,encrypted_word=None, decrypted_word=None):
+    def saveCoding(self,word, shift,encrypted_word=None, decrypted_word=None):
         file = open("saved_data.json", "r")
         saved_data = json.load(file)
         if word not in saved_data:
@@ -129,7 +175,7 @@ class EncrDecr:
         file.write(json.dumps(saved_data))
         file.close()
 
-    def askfor_encrword(self,word,shift):
+    def findEncrypted(self,word,shift):
         file = open("saved_data.json", "r")
         saved_data = json.load(file)
         if word in saved_data:
@@ -140,7 +186,7 @@ class EncrDecr:
         elif word not in saved_data:
             return False
 
-    def askfor_decrword(self,word,shift):
+    def findDecrypted(self,word,shift):
         file = open("saved_data.json", "r")
         saved_data = json.load(file)
         if word in saved_data:
@@ -155,28 +201,12 @@ class EncrDecr:
             return False
 
 
-list = EncrDecr()
-list.EncrDecr_data(list)
-list.encrypt()
-list.decrypt()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def main():
+    print "----------------------------""\n" "Welcome to **Caesar Cipher**""\n""----------------------------""\n"
+    list = EncrDecr()
+    list.EncrDecr_data(list)
+    list.EncrDecr_menu()
+main()
 
 
